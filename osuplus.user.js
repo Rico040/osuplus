@@ -2340,20 +2340,24 @@
         }
 
         function makeMirror(url, topName, bottomName, newTab, onClick){
-            var mirror = `<a href="${url}" ${newTab ? "target='_blank'" : ""} data-turbolinks="false" class="btn-osu-big btn-osu-big--beatmapset-header js-beatmapset-download-link">
+            var mirror = `<a ${url ? `href="${url}"` : 'href="#"'} ${newTab ? "target='_blank'" : ""} data-turbolinks="false" class="btn-osu-big btn-osu-big--beatmapset-header js-beatmapset-download-link">
                 <span class="btn-osu-big__content ">
                 <span class="btn-osu-big__left">
                 <span class="btn-osu-big__text-top">${topName}</span>
                 ${bottomName === null ? "" : `<span class="btn-osu-big__text-bottom">${bottomName}</span>`}
                 </span><span class="btn-osu-big__icon">
                 <span class="fa-fw"><i class="fas fa-download"></i></span></span></span></a>`;
+                
+            var $mirror = $(mirror);
+                
             if($(".beatmapset-header__more").length > 0){
-                $(".beatmapset-header__more").before(mirror);
+                $(".beatmapset-header__more").before($mirror);
             }else{
-                $(".beatmapset-header__buttons").append(mirror);
+                $(".beatmapset-header__buttons").append($mirror);
             }
+            
             if(onClick) {
-                mirror.on('click', function(e) {
+                $mirror.on('click', function(e) {
                     e.preventDefault();
                     onClick();
                 });
