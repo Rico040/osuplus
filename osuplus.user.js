@@ -2391,12 +2391,7 @@
                     })
                     .then(data => {
                         if (data && data.url) {
-                            // rai.moe a bit weird, it's there until mirror has better defaults
-                            const urlString = `https://api.rai.moe${data.url}`;
-                            const url = new URL(urlString);
-                            const filename = url.searchParams.get('filename');
-                            url.searchParams.set('filename', `${id} ${filename}`)
-                            window.location.href = url.toString();
+                            window.location.href = `https://api.rai.moe${data.url}`;
                         }
                     })
                     .catch(error => {
