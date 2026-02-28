@@ -1,6 +1,6 @@
-# osuplus
+# Rico040's osuplus
 
-A userscript to add features to your boring osu! web pages.
+A userscript to add features to your boring osu! web pages. This is personal fork for my own needs, so those link won't give you support.
 
 Forum: https://osu.ppy.sh/community/forums/topics/408541 \
 Discord: https://discord.gg/mzssqXQepM
@@ -42,7 +42,7 @@ All features are available on https://osu.ppy.sh/.
 
 ## How to install
 1. Ensure you have Tampermonkey/Greasemonkey installed and enabled. 
-1. Go to https://github.com/limjeck/osuplus/raw/master/osuplus.user.js. Tampermonkey/Greasemonkey will automatically open a tab, prompting you to install the userscript. Install it.
+1. Go to https://github.com/Rico040/osuplus/raw/master/osuplus.user.js. Tampermonkey/Greasemonkey will automatically open a tab, prompting you to install the userscript. Install it.
 1. On Chromium browsers, userscripts may not run properly without enabling Developer Mode. If necessary, enable Developer Mode for your browser (for Tampermonkey users, see https://www.tampermonkey.net/faq.php?locale=en#Q209)
 1. Go to any osu webpage. There should be a big red banner at the top prompting you to use your osu!API key.
 1. To get your osu!API key, go to https://osu.ppy.sh/p/api or https://osu.ppy.sh/home/account/edit#legacy-api.

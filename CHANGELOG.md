@@ -1,3 +1,8 @@
+# 2.3.18 (28 Feb 2026)
+
+## Features
+- Added rai.moe beatmap mirror
+
 # 2.3.17 (30 Nov 2025)
 
 ## Bugfixes

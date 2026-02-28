@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         osuplus
 // @namespace    https://osu.ppy.sh/u/1843447
-// @version      2.3.17
+// @version      2.3.18
 // @description  show pp, selected mods ranking, friends ranking and other stuff
 // @author       oneplusone
 // @match        http://osu.ppy.sh/*
@@ -2347,21 +2347,65 @@
                 ${bottomName === null ? "" : `<span class="btn-osu-big__text-bottom">${bottomName}</span>`}
                 </span><span class="btn-osu-big__icon">
                 <span class="fa-fw"><i class="fas fa-download"></i></span></span></span></a>`;
-                
+
             var $mirror = $(mirror);
-                
+
             if($(".beatmapset-header__more").length > 0){
                 $(".beatmapset-header__more").before($mirror);
             }else{
                 $(".beatmapset-header__buttons").append($mirror);
             }
-            
+
             if(onClick) {
                 $mirror.on('click', function(e) {
                     e.preventDefault();
                     onClick();
                 });
             }   
+        }
+
+        function raimoeWrap(id, video){
+            function fetchWithRetry(retryCount = 0, maxRetries = 10) {
+                fetch(`https://api.rai.moe/beatmaps/${id}/download?video=${video}`)
+                    .then(response => {
+                        if (response.status === 202) {
+                            return response.json().then(data => {
+                                const retryAfter = data.retryAfter || 2000;
+
+                                if (retryCount >= maxRetries) {
+                                    throw new Error("Maximum retry attempts reached. Please try again later.");
+                                }
+
+                                console.log(`rai.moe: Beatmap ${data.status}. Retrying in ${retryAfter}s... (Attempt ${retryCount + 1}/${maxRetries})`);
+                                
+                                setTimeout(() => {
+                                    fetchWithRetry(retryCount + 1, maxRetries);
+                                }, retryAfter * 1000);
+
+                                return null;
+                            });
+                        } else if (!response.ok) {
+                            throw new Error("rai.moe didn't respond with ok");
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data && data.url) {
+                            // rai.moe a bit weird, it's there until mirror has better defaults
+                            const urlString = `https://api.rai.moe${data.url}`;
+                            const url = new URL(urlString);
+                            const filename = url.searchParams.get('filename');
+                            url.searchParams.set('filename', `${id} ${filename}`)
+                            window.location.href = url.toString();
+                        }
+                    })
+                    .catch(error => {
+                        console.error("rai.moe error:", error.message);
+                        alert(`Failed to download from rai.moe: ${error.message}`);
+                    });
+            }
+
+            fetchWithRetry();
         }
 
         function addMirrors(){
@@ -2385,28 +2429,10 @@
             }
             if(settings.showMirror6){
                 makeMirror(null, "rai.moe", null, false, function() {
-                    fetch(`https://api.rai.moe/beatmaps/${jsonBeatmapset.id}/download?video=true`)
-                        .then(response => {
-                            if (!response.ok) {
-                                throw new Error("rai.moe didn't respound with ok");
-                            }
-                            return response.json();
-                        })
-                        .then(data => {
-                            window.location.href = `https://api.rai.moe${data.url}`;
-                        })
+                    raimoeWrap(jsonBeatmapset.id, true);
                 });
                 makeMirror(null, "rai.moe", "no Video", false, function() {
-                    fetch(`https://api.rai.moe/beatmaps/${jsonBeatmapset.id}/download?video=false`)
-                        .then(response => {
-                            if (!response.ok) {
-                                throw new Error("rai.moe didn't respound with ok");
-                            }
-                            return response.json();
-                        })
-                        .then(data => {
-                            window.location.href = `https://api.rai.moe${data.url}`;
-                        })
+                    raimoeWrap(jsonBeatmapset.id, false);
                 });
             }
         }
