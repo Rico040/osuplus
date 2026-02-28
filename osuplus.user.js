@@ -200,6 +200,7 @@
         showMirror3: false,
         showMirror4: false,
         showMirror5: false,
+        showMirror6: false,
         //showSubscribeMap: false,
         apikey: null,
         failedChecked: true,
@@ -447,6 +448,7 @@
                             makeSettingRow("Show NeriNyan mirror", null, makeCheckboxOption("showMirror3")),
                             // makeSettingRow("Show Chimu.moe mirror", null, makeCheckboxOption("showMirror4")),
                             makeSettingRow("Show Mino mirror", null, makeCheckboxOption("showMirror5")),
+                            makeSettingRow("Show rai.moe mirror", null, makeCheckboxOption("showMirror6")),
                             makeSettingRow("Show dates", null, makeCheckboxOption("showDates")),
                             makeSettingRow("Show pp rank beside player", "scores may take longer to load", makeCheckboxOption("showPpRank")),
                             makeSettingRow("Fetch player countries outside top 50", "disable to load faster, but some players' countries won't be loaded", makeCheckboxOption("fetchPlayerCountries")),
@@ -485,7 +487,7 @@
                 $("<button id='osuplusSettingsSaveBtn'>Save</button>").click(function(){
                     GMX.setValue("apikey", nullIfBlankOrNull($("#settings-apikey").val()));
                     var properties = [
-                        "showMirror", "showMirror2", "showMirror3", "showMirror4", "showMirror5", "showDates", "showPpRank", "fetchPlayerCountries", "showTop100", "pp2dp", "failedChecked", 
+                        "showMirror", "showMirror2", "showMirror3", "showMirror4", "showMirror5", "showMirror6", "showDates", "showPpRank", "fetchPlayerCountries", "showTop100", "pp2dp", "failedChecked", 
                         "showDetailedHitCount", "fetchUserpageMaxCombo", "fetchFirstsInfo", "rankingVisible", "forceShowDifficulties", "showSiteSwitcher", 
                         "showRecent", "osupreview", "osupreview2", "osupreview3", "showBWS"
                     ];
@@ -2337,7 +2339,7 @@
             });
         }
 
-        function makeMirror(url, topName, bottomName, newTab){
+        function makeMirror(url, topName, bottomName, newTab, onClick){
             var mirror = `<a href="${url}" ${newTab ? "target='_blank'" : ""} data-turbolinks="false" class="btn-osu-big btn-osu-big--beatmapset-header js-beatmapset-download-link">
                 <span class="btn-osu-big__content ">
                 <span class="btn-osu-big__left">
@@ -2350,6 +2352,12 @@
             }else{
                 $(".beatmapset-header__buttons").append(mirror);
             }
+            if(onClick) {
+                mirror.on('click', function(e) {
+                    e.preventDefault();
+                    onClick();
+                });
+            }   
         }
 
         function addMirrors(){
@@ -2370,6 +2378,32 @@
             }
             if(settings.showMirror5){
                 makeMirror(`https://catboy.best/d/${jsonBeatmapset.id}`, "Mino", null, false);
+            }
+            if(settings.showMirror6){
+                makeMirror(null, "rai.moe", null, false, function() {
+                    fetch(`https://api.rai.moe/beatmaps/${jsonBeatmapset.id}/download?video=true`)
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error("rai.moe didn't respound with ok");
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            window.location.href = `https://api.rai.moe${data.url}`;
+                        })
+                });
+                makeMirror(null, "rai.moe", "no Video", false, function() {
+                    fetch(`https://api.rai.moe/beatmaps/${jsonBeatmapset.id}/download?video=false`)
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error("rai.moe didn't respound with ok");
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            window.location.href = `https://api.rai.moe${data.url}`;
+                        })
+                });
             }
         }
 
