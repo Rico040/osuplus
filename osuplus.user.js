@@ -2376,7 +2376,7 @@
                                     throw new Error("Maximum retry attempts reached. Please try again later.");
                                 }
 
-                                console.log(`rai.moe: Beatmap ${data.status}. Retrying in ${retryAfter}s... (Attempt ${retryCount + 1}/${maxRetries})`);
+                                console.log(`rai: Beatmap ${data.status}. Retrying in ${retryAfter}s... (Attempt ${retryCount + 1}/${maxRetries})`);
                                 
                                 setTimeout(() => {
                                     fetchWithRetry(retryCount + 1, maxRetries);
@@ -2423,10 +2423,10 @@
                 makeMirror(`https://catboy.best/d/${jsonBeatmapset.id}`, "Mino", null, false);
             }
             if(settings.showMirror6){
-                makeMirror(null, "rai.moe", null, false, function() {
+                makeMirror(null, "rai", null, false, function() {
                     raimoeWrap(jsonBeatmapset.id, true);
                 });
-                makeMirror(null, "rai.moe", "no Video", false, function() {
+                makeMirror(null, "rai", "no Video", false, function() {
                     raimoeWrap(jsonBeatmapset.id, false);
                 });
             }
